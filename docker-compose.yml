@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./api
+    restart: "always"
+    environment:
+      - "FLASK_DEBUG=${FLASK_DEBUG:-false}"
+      - FLASK_APP=/api
+    env_file:
+      - ./.env
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+  db:
+    image: mariadb:11.2-jammy
+    env_file:
+      - ./.env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    expose:
+      - 3306
+
+volumes:
+  mariadb_data:

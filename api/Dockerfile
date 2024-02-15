@@ -11,4 +11,4 @@ COPY . ./api
 
 ENV PYTHONUNBUFFERED 1
 
-CMD [ "flask", "--app", "api", "run", "--host=0.0.0.0" ]
+CMD [ "gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "api:create_app()" ]
