@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     docker.image(env.DOCKER_IMAGE).inside {
-                        sh 'flake8 ./api'
+                        sh 'flake8 /api'
                     }
                 }
             }

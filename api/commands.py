@@ -27,6 +27,7 @@ def create_user(username, password):
 @bp.cli.command('load-albums')
 @click.argument('filename')
 def load_initial_kaggle_set(filename):
+    """Loads an initial dataset to DB to make testing easier"""
     with open(filename, newline='\n', encoding='utf-8', errors='ignore') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
         rows = []
