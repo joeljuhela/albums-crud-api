@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
 from .models import db, Album
@@ -6,11 +6,13 @@ from .auth_middleware import auth_required
 
 bp = Blueprint('albums', __name__, url_prefix='/albums')
 
+
 @bp.route('/', methods=['GET'])
 @auth_required
 def get_albums():
     albums = Album.query.all()
     return jsonify(albums)
+
 
 @bp.route('/', methods=['POST'])
 @auth_required
@@ -19,15 +21,15 @@ def submit_album():
 
     try:
         album = Album(**body)
-    except TypeError as e:
+    except TypeError:
         return {}, 400
     try:
         db.session.add(album)
         db.session.commit()
-    except IntegrityError as e:
+    except IntegrityError:
         db.session.rollback()
         return {}, 400
-    
+
     return jsonify(album), 201
 
 
@@ -39,6 +41,7 @@ def get_album(id):
         return {}, 404
     return jsonify(album)
 
+
 @bp.route('/<int:id>', methods=['DELETE'])
 @auth_required
 def delete_album(id):
@@ -46,8 +49,9 @@ def delete_album(id):
     if album:
         db.session.delete(album)
         db.session.commit()
-    
+
     return {}, 204
+
 
 @bp.route('/<int:id>', methods=['PUT'])
 @auth_required
@@ -55,4 +59,3 @@ def update_album(id):
     album = Album.query.filter(Album.id == id).one()
     if not album:
         return {}, 404
-    

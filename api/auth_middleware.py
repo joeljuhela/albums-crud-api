@@ -16,15 +16,23 @@ def auth_required(f):
             token = auth_header.split(" ")[1]
         if token:
             try:
-                payload = jwt.decode(token, current_app.config.get('SECRET_KEY'), algorithms=["HS256"])
-                username = payload['sub'] 
+                payload = jwt.decode(
+                    token,
+                    current_app.config.get('SECRET_KEY'),
+                    algorithms=["HS256"]
+                )
+                username = payload['sub']
             except jwt.InvalidTokenError:
                 return {'message': 'Unauthorized'}, 401
             except jwt.ExpiredSignatureError:
-                return {'message': 'Token expired'}, 401 
-                
+                return {'message': 'Token expired'}, 401
+
+            user = User.query.filter(User.username == username).first()
+            if not user:
+                return {'message': 'Unauthorized'}, 401
+
             return f(*args, **kwargs)
-        
+
         return {'message': 'Unauthorized'}, 401
 
     return decorated

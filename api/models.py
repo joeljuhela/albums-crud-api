@@ -1,18 +1,19 @@
 from typing import Optional
 from dataclasses import dataclass
 
-import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import UniqueConstraint, String
 from sqlalchemy.dialects.mysql import YEAR
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
-from flask import current_app
+
 
 class Base(DeclarativeBase):
     pass
 
+
 db = SQLAlchemy(model_class=Base)
+
 
 @dataclass
 class Album(db.Model):
@@ -24,15 +25,21 @@ class Album(db.Model):
     subgenre: Mapped[Optional[str]] = mapped_column(String(255))
 
     __table_args__ = (
-        UniqueConstraint('title', 'artist', 'release_year', name='unique_title_artist_release_year'),
+        UniqueConstraint(
+            'title',
+            'artist',
+            'release_year',
+            name='unique_title_artist_release_year'
+        ),
     )
 
     def __repr__(self):
-        return f"<Album id: {self.id}, {self.title} - {self.artist} - {self.release_year}>"
+        return f"<Album id: {self.id}, {self.title} - {self.artist} - {self.release_year}>"  # noqa
 
 
 class User(db.Model):
-    username: Mapped[str] = mapped_column(String(50), primary_key=True)
+    username: Mapped[str] = mapped_column(String(50),
+                                          primary_key=True)
     pwd_hash: Mapped[str] = mapped_column(String(255))
 
     def set_password(self, password):

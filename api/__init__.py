@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask
 
 from .config import Config
@@ -8,7 +6,6 @@ from .config import Config
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(Config)
-
 
     from api.models import db
     db.init_app(app)
@@ -23,5 +20,4 @@ def create_app(test_config=None):
     from . import commands
     app.register_blueprint(commands.bp)
 
-    
     return app
