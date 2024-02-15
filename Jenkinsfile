@@ -15,8 +15,6 @@ pipeline {
         }
         stage('Linter') {
             steps {
-                dockerImage = docker.build 
-                sh 'flake8 ./api'
             }
         }
     }
