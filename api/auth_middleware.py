@@ -14,7 +14,6 @@ def auth_required(f):
         token = None
         if auth_header:
             token = auth_header.split(" ")[1]
-        
         if token:
             try:
                 payload = jwt.decode(token, current_app.config.get('SECRET_KEY'), algorithms=["HS256"])

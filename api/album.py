@@ -20,30 +20,39 @@ def submit_album():
     try:
         album = Album(**body)
     except TypeError as e:
-        return jsonify({}), 400
+        return {}, 400
     try:
         db.session.add(album)
         db.session.commit()
     except IntegrityError as e:
         db.session.rollback()
-        return jsonify({}), 400
+        return {}, 400
     
-    return jsonify(album), 201, {'location': f'/{album.id}'}
+    return jsonify(album), 201
 
 
 @bp.route('/<int:id>', methods=['GET'])
 @auth_required
 def get_album(id):
-    album = Album.query.filter(Album.id == id).one()
+    album = Album.query.filter(Album.id == id).first()
     if not album:
-        return 404
-    else:
-        return jsonify(album)
+        return {}, 404
+    return jsonify(album)
 
 @bp.route('/<int:id>', methods=['DELETE'])
+@auth_required
 def delete_album(id):
-    pass
+    album = Album.query.filter(Album.id == id).first()
+    if album:
+        db.session.delete(album)
+        db.session.commit()
+    
+    return {}, 204
 
 @bp.route('/<int:id>', methods=['PUT'])
+@auth_required
 def update_album(id):
-    pass
+    album = Album.query.filter(Album.id == id).one()
+    if not album:
+        return {}, 404
+    
