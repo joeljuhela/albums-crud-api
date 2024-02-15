@@ -1,10 +1,13 @@
 from typing import Optional
 from dataclasses import dataclass
 
+import jwt
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import UniqueConstraint, String
 from sqlalchemy.dialects.mysql import YEAR
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
+from flask import current_app
 
 class Base(DeclarativeBase):
     pass
@@ -26,3 +29,14 @@ class Album(db.Model):
 
     def __repr__(self):
         return f"<Album id: {self.id}, {self.title} - {self.artist} - {self.release_year}>"
+
+
+class User(db.Model):
+    username: Mapped[str] = mapped_column(String(50), primary_key=True)
+    pwd_hash: Mapped[str] = mapped_column(String(255))
+
+    def set_password(self, password):
+        self.pwd_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.pwd_hash, password)

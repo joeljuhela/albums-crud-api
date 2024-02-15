@@ -2,15 +2,18 @@ from flask import Blueprint, jsonify, request, abort
 from sqlalchemy.exc import IntegrityError
 
 from .models import db, Album
+from .auth_middleware import auth_required
 
 bp = Blueprint('albums', __name__, url_prefix='/albums')
 
 @bp.route('/', methods=['GET'])
+@auth_required
 def get_albums():
     albums = Album.query.all()
     return jsonify(albums)
 
 @bp.route('/', methods=['POST'])
+@auth_required
 def submit_album():
     body = request.json
 
@@ -29,6 +32,7 @@ def submit_album():
 
 
 @bp.route('/<int:id>', methods=['GET'])
+@auth_required
 def get_album(id):
     album = Album.query.filter(Album.id == id).one()
     if not album:

@@ -1,8 +1,12 @@
 import os
 import mariadb
+import click
 import json
 
 from flask import Flask
+from sqlalchemy.exc import IntegrityError
+
+from .models import User
 
 
 def create_app(test_config=None):
@@ -28,7 +32,24 @@ def create_app(test_config=None):
         pass
 
     from . import album
+    from . import auth
     app.register_blueprint(album.bp)
+    app.register_blueprint(auth.bp)
+
+    @app.cli.command('create-user')
+    @click.option('--username', prompt=True)
+    @click.password_option()
+    def create_user(username, password):
+        user = User(
+            username=username
+        )
+        user.set_password(password)
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            click.echo('User with that password already exists!')
 
     
     return app
