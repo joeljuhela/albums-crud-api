@@ -15,6 +15,8 @@ def login():
         return {"message": "Unauthorized"}, 401
 
     user = User.query.filter(User.username == auth.username).first()
+    if not user:
+        return {"message": "Unauthorized"}, 401
 
     if user.check_password(auth.password):
         token = jwt.encode(

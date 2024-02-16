@@ -8,6 +8,10 @@ from .models import User
 
 
 def auth_required(f):
+    """
+    Check that the user supplied a valid JWT and that the
+    user associated with the token actually exists
+    """
     @wraps(f)
     def decorated(*args, **kwargs):
         auth_header = request.headers.get('Authorization')

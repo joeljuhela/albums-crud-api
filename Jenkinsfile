@@ -6,7 +6,7 @@ pipeline {
     }
 
     stages {
-        stage('Build test image') {
+        stage('Build image') {
             steps {
                 script {
                     docker.build(env.DOCKER_IMAGE, './api')

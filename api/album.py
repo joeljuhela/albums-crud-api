@@ -56,6 +56,28 @@ def delete_album(id):
 @bp.route('/<int:id>', methods=['PUT'])
 @auth_required
 def update_album(id):
+    body = request.json
+
+    try:
+        update_data = Album(**body)
+    except TypeError:
+        return {}, 400
+
     album = Album.query.filter(Album.id == id).one()
     if not album:
         return {}, 404
+    
+    album.title = update_data.title
+    album.artist = update_data.artist
+    album.release_year = update_data.release_year
+    album.genre = update_data.genre
+    album.subgenre = update_data.subgenre
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        return {
+            'message': 'Album with same data already exists'
+        }, 400
+    
+    return {}, 200
