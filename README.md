@@ -81,10 +81,10 @@ To create a user for the api, run the following command in the project root
 
 ## Jenkins
 
-My previous experience is only using Gitlab CI tooling, so the `Jenkinsfile` is quite bare. To get it running, I created a multibranch pipeline in Jenkins that is tied to this Github repository. 
+My previous experience is only using Gitlab CI, so the `Jenkinsfile` is quite bare. To get it running, I created a multibranch pipeline in Jenkins that is tied to this Github repository. 
 
 Only thing the pipeline currently does is build a test image and then runs linting using `flake8`
 
 ## Notes
 
-- Thi
+- Assumption was that this API didn't need to take into account the possible later changes into the models. For that there would be a need to include for example `alembic` in the project.
